@@ -42,7 +42,7 @@ class WPDB():
                 `lv` integer,
                 `cid` integer,
                 `die` integer,
-                `farmed` integer,
+                `farmed` bigint,
                 `max_power` integer,
                 `camp_power` integer,
                 `tech_power` integer,
@@ -183,6 +183,7 @@ class WPDB():
                   playerData["powers"]["camp"],
                   playerData["powers"]["tech"],
                   playerData["powers"]["equip"],
+                  playerData["powers"]["officer"],
                   playerData["powers"]["army_air"],
                   playerData["powers"]["army_navy"],
                   playerData["powers"]["army_ground"],
@@ -211,17 +212,27 @@ class WPDB():
         cursor.execute(add_data, new_data)
         self.connection.commit()
 
+    def add_guild_data(self, guildData: list[dict]):
+        if not guildData or guildData["gid"]: return 
+        
+        cursor = self.connection.cursor()
+        find_guild = "SELECT * FROM guilds WHERE id = %s"
+        cursor.execute(find_guild, (guildData["gid"],))
+        guild = cursor.fetchone()
+        print(guild)
+        if not guild:
+            create_new_player = "INSERT INTO guilds (id) VALUES (%s)"
+            cursor.execute(create_new_player, (guildData["gid"], ))
+            self.connection.commit()
 
 
         
-        
-
 
     
 DB = WPDB()
 
-jsonstring = '{"Code":0,"Message":"ok","Data":[{"id":200666099,"day":20250810,"pid":15981985,"wid":32,"cid":30020,"ccid":30020,"gid":1430842,"gnick":"AFK","lv":32,"nick":"c0rrupted","power":360417610,"maxpower":361686750,"sumkill":2555014,"score":1436745885,"die":953101,"caiji":19093877082,"gx":28235,"bz":18403,"c_power":28968,"c_die":0,"c_score":0,"c_sumkill":0,"c_caiji":35049033,"powers":{"camp":2223900,"tech":97210991,"equip":5327844,"total":360417610,"officer":14391300,"army_air":51621258,"army_navy":7430145,"army_ground":133859230,"tactic_card":805000,"mine_vehicle":16000,"super_computer":1692287,"user_city_building":45839655},"kills":[6094,6396,2357,5483,18519,55347,135086,211754,277656,295909,166464,180117,343383,314879,535570],"created_at":"2025-08-11 12:09:13"}]}'
+jsonstringplayer = '{"Code":0,"Message":"ok","Data":[{"id":200666099,"day":20250810,"pid":15981985,"wid":32,"cid":30020,"ccid":30020,"gid":1430842,"gnick":"AFK","lv":32,"nick":"c0rrupted","power":360417610,"maxpower":361686750,"sumkill":2555014,"score":1436745885,"die":953101,"caiji":19093877082,"gx":28235,"bz":18403,"c_power":28968,"c_die":0,"c_score":0,"c_sumkill":0,"c_caiji":35049033,"powers":{"camp":2223900,"tech":97210991,"equip":5327844,"total":360417610,"officer":14391300,"army_air":51621258,"army_navy":7430145,"army_ground":133859230,"tactic_card":805000,"mine_vehicle":16000,"super_computer":1692287,"user_city_building":45839655},"kills":[6094,6396,2357,5483,18519,55347,135086,211754,277656,295909,166464,180117,343383,314879,535570],"created_at":"2025-08-11 12:09:13"}]}'
+jsonstringguild = '{"id":9946446,"day":20250810,"wid":32,"ccid":0,"gid":1430842,"power":960558834,"sname":"AFK","fname":"Aim.Fire.Kill.","owner":"MiniManny","kil":624333,"di":503,"c_power":226892,"c_kil":0,"created_at":"2025-08-11 12:16:17","c_di":0}'
+#print(json.loads(jsonstring)["Data"][0])
 
-print(json.loads(jsonstring)["Data"][0])
-
-DB.add_player_data(json.loads(jsonstring)["Data"][0])
+DB.add_guild_data(json.loads(jsonstringguild))
